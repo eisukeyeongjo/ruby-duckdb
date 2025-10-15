@@ -5,11 +5,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<title>class DuckDB::ExtractedStatementsImpl - RDoc Documentation</title>
+<title>class DuckDB::InstanceCache - RDoc Documentation</title>
 
-  <meta name="keywords" content="ruby,class,DuckDB::ExtractedStatementsImpl">
+  <meta name="keywords" content="ruby,class,DuckDB::InstanceCache">
 
-    <meta name="description" content="Documentation for the DuckDB::ExtractedStatementsImpl class">
+    <meta name="description" content="class DuckDB::InstanceCache: program (re)opens multiple databases to the same file within the same statement. InstanceCache.">
 
 
 <script type="text/javascript">
@@ -87,8 +87,7 @@
     <h3>Instance Methods</h3>
     <ul class="link-list" role="directory">
       <li ><a href="#method-i-destroy">destroy</a></li>
-      <li ><a href="#method-i-prepared_statement">prepared_statement</a></li>
-      <li ><a href="#method-i-size">size</a></li>
+      <li ><a href="#method-i-get">get</a></li>
     </ul>
   </div>
 
@@ -102,7 +101,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-DuckDB::ExtractedStatementsImpl">
+<main role="main" aria-labelledby="class-DuckDB::InstanceCache">
   
   
     <ol role="navigation" aria-label="breadcrumb" class="breadcrumb">
@@ -115,19 +114,27 @@
       
       <li>
         
-        <span>ExtractedStatementsImpl</span>
+        <span>InstanceCache</span>
         
       </li>
       
     </ol>
   
 
-  <h1 id="class-DuckDB::ExtractedStatementsImpl" class="anchor-link class">
-    class DuckDB::ExtractedStatementsImpl
+  <h1 id="class-DuckDB::InstanceCache" class="anchor-link class">
+    class DuckDB::InstanceCache
   </h1>
 
   <section class="description">
     
+<p>The <a href="InstanceCache.html"><code>DuckDB::InstanceCache</code></a> is necessary if a client/program (re)opens multiple databases to the same file within the same statement.</p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;duckdb&#39;</span>
+<span class="ruby-identifier">cache</span> = <span class="ruby-constant">DuckDB</span><span class="ruby-operator">::</span><span class="ruby-constant">InstanceCache</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">db1</span> = <span class="ruby-identifier">cache</span>.<span class="ruby-identifier">get</span>(<span class="ruby-value">path:</span> <span class="ruby-string">&#39;db.duckdb&#39;</span>)
+<span class="ruby-identifier">db2</span> = <span class="ruby-identifier">cache</span>.<span class="ruby-identifier">get</span>(<span class="ruby-value">path:</span> <span class="ruby-string">&#39;db.duckdb&#39;</span>)
+</pre>
+
   </section>
 
   <section id="5Buntitled-5D" class="documentation-section anchor-link">
@@ -146,7 +153,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(p1, p2)</span>
+                <span class="method-args">()</span>
               </a>
             </div>
         </div>
@@ -159,25 +166,14 @@
 
         <div class="method-description">
           <div class="method-source-code" id="new-source">
-            <pre>static VALUE duckdb_extracted_statements_initialize(VALUE self, VALUE con, VALUE query) {
-    rubyDuckDBConnection *pcon;
-    rubyDuckDBExtractedStatements *ctx;
-    char *pquery;
-    const char *error;
+            <pre>static VALUE duckdb_instance_cache_initialize(VALUE self) {
+    rubyDuckDBInstanceCache *ctx;
 
-    if (rb_obj_is_kind_of(con, cDuckDBConnection) != Qtrue) {
-        rb_raise(rb_eTypeError, &quot;1st argument must be DuckDB::Connection&quot;);
-    }
+    TypedData_Get_Struct(self, rubyDuckDBInstanceCache, &amp;instance_cache_data_type, ctx);
 
-    pquery = StringValuePtr(query);
-    pcon = get_struct_connection(con);
-    TypedData_Get_Struct(self, rubyDuckDBExtractedStatements, &amp;extract_statements_data_type, ctx);
-
-    ctx-&gt;num_statements = duckdb_extract_statements(pcon-&gt;con, pquery, &amp;(ctx-&gt;extracted_statements));
-
-    if (ctx-&gt;num_statements == 0) {
-        error = duckdb_extract_statements_error(ctx-&gt;extracted_statements);
-        rb_raise(eDuckDBError, &quot;%s&quot;, error ? error : &quot;Failed to extract statements(Database connection closed?).&quot;);
+    ctx-&gt;instance_cache = duckdb_create_instance_cache();
+    if (ctx-&gt;instance_cache == NULL) {
+        rb_raise(eDuckDBError, &quot;Failed to create instance cache&quot;);
     }
 
     return self;
@@ -214,12 +210,14 @@
 
         <div class="method-description">
           <div class="method-source-code" id="destroy-source">
-            <pre>static VALUE duckdb_extracted_statements_destroy(VALUE self) {
-    rubyDuckDBExtractedStatements *ctx;
+            <pre>static VALUE duckdb_instance_cache_destroy(VALUE self) {
+    rubyDuckDBInstanceCache *ctx;
+    TypedData_Get_Struct(self, rubyDuckDBInstanceCache, &amp;instance_cache_data_type, ctx);
 
-    TypedData_Get_Struct(self, rubyDuckDBExtractedStatements, &amp;extract_statements_data_type, ctx);
-
-    duckdb_destroy_extracted(&amp;(ctx-&gt;extracted_statements));
+    if (ctx-&gt;instance_cache) {
+        duckdb_destroy_instance_cache(&amp;(ctx-&gt;instance_cache));
+        ctx-&gt;instance_cache = NULL;
+    }
 
     return Qnil;
 }</pre>
@@ -230,14 +228,15 @@
 
       </div>
 
-      <div id="method-i-prepared_statement" class="method-detail anchor-link ">
+      <div id="method-i-get" class="method-detail anchor-link ">
         <div class="method-header">
-            <div class="method-heading">
-              <a href="#method-i-prepared_statement" title="Link to this method">
-                <span class="method-name">prepared_statement</span>
-                <span class="method-args">(p1, p2)</span>
-              </a>
-            </div>
+              <div class="method-heading">
+                <a href="#method-i-get" title="Link to this method">
+                  <span class="method-callseq">
+                    get(path:, config:) &rarr; self
+                  </span>
+                </a>
+              </div>
         </div>
 
           <div class="method-controls">
@@ -247,53 +246,17 @@
           </div>
 
         <div class="method-description">
-          <div class="method-source-code" id="prepared_statement-source">
-            <pre>static VALUE duckdb_extracted_statements_prepared_statement(VALUE self, VALUE con, VALUE index) {
-    rubyDuckDBConnection *pcon;
-    rubyDuckDBExtractedStatements *ctx;
-
-    if (rb_obj_is_kind_of(con, cDuckDBConnection) != Qtrue) {
-        rb_raise(rb_eTypeError, &quot;1st argument must be DuckDB::Connection&quot;);
-    }
-    pcon = get_struct_connection(con);
-    TypedData_Get_Struct(self, rubyDuckDBExtractedStatements, &amp;extract_statements_data_type, ctx);
-
-    return rbduckdb_prepared_statement_new(pcon-&gt;con, ctx-&gt;extracted_statements, NUM2ULL(index));
-}</pre>
+          <div class="method-source-code" id="get-source">
+            <pre><span class="ruby-comment"># File lib/duckdb/instance_cache.rb, line 20</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get</span>(<span class="ruby-value">path:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">config:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">get_or_create</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">config</span>)
+<span class="ruby-keyword">end</span></pre>
           </div>
-          
-        </div>
+          <p>Returns a <a href="Database.html"><code>DuckDB::Database</code></a> object for the given path and config.</p>
 
-
-      </div>
-
-      <div id="method-i-size" class="method-detail anchor-link ">
-        <div class="method-header">
-            <div class="method-heading">
-              <a href="#method-i-size" title="Link to this method">
-                <span class="method-name">size</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-        </div>
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-
-        <div class="method-description">
-          <div class="method-source-code" id="size-source">
-            <pre>static VALUE duckdb_extracted_statements_size(VALUE self) {
-    rubyDuckDBExtractedStatements *ctx;
-
-    TypedData_Get_Struct(self, rubyDuckDBExtractedStatements, &amp;extract_statements_data_type, ctx);
-
-    return ULL2NUM(ctx-&gt;num_statements);
-}</pre>
-          </div>
-          
+<pre class="ruby"><span class="ruby-identifier">db1</span> = <span class="ruby-identifier">cache</span>.<span class="ruby-identifier">get</span>(<span class="ruby-value">path:</span> <span class="ruby-string">&#39;db.duckdb&#39;</span>)
+<span class="ruby-identifier">db2</span> = <span class="ruby-identifier">cache</span>.<span class="ruby-identifier">get</span>(<span class="ruby-value">path:</span> <span class="ruby-string">&#39;db.duckdb&#39;</span>)
+</pre>
         </div>
 
 
