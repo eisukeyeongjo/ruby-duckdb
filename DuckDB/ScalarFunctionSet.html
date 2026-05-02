@@ -5,17 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class DuckDB::InstanceCache - RDoc Documentation</title>
+<title>class DuckDB::ScalarFunctionSet - RDoc Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,DuckDB::InstanceCache"
+    content="ruby,class,DuckDB::ScalarFunctionSet"
   >
 
     <meta
       name="description"
-      content="class DuckDB::InstanceCache: program (re)opens multiple databases to the same file within the same statement. InstanceCache."
+      content="class DuckDB::ScalarFunctionSet: ScalarFunctionSet encapsulates DuckDB&#39;s scalar function set, which allows registering multiple overloads of a scalar function under one name. ScalarFu"
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class DuckDB::InstanceCache - RDoc Documentation">
+<meta property="og:title" content="class DuckDB::ScalarFunctionSet - RDoc Documentation">
 
 
 
-    <meta property="og:description" content="program (re)opens multiple databases to the same file within the same statement. InstanceCache.">
+    <meta property="og:description" content="ScalarFunctionSet encapsulates DuckDB&#39;s scalar function set, which allows registering multiple overloads of a scalar function under one name. ScalarFu">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class DuckDB::InstanceCache - RDoc Documentation">
+<meta name="twitter:title" content="class DuckDB::ScalarFunctionSet - RDoc Documentation">
 
 
 
-    <meta name="twitter:description" content="program (re)opens multiple databases to the same file within the same statement. InstanceCache.">
+    <meta name="twitter:description" content="ScalarFunctionSet encapsulates DuckDB&#39;s scalar function set, which allows registering multiple overloads of a scalar function under one name. ScalarFu">
 
 
 
@@ -499,9 +499,7 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-destroy">destroy</a></li>
-
-        <li ><a href="#method-i-get">get</a></li>
+        <li ><a href="#method-i-add">add</a></li>
 
       </ul>
     </details>
@@ -526,7 +524,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-DuckDB::InstanceCache">
+<main role="main" aria-labelledby="class-DuckDB::ScalarFunctionSet">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -539,26 +537,22 @@
       
       <li>
         
-        <span>InstanceCache</span>
+        <span>ScalarFunctionSet</span>
         
       </li>
       
     </ol>
   
 
-  <h1 id="class-DuckDB::InstanceCache" class="anchor-link class">
-    class DuckDB::InstanceCache
+  <h1 id="class-DuckDB::ScalarFunctionSet" class="anchor-link class">
+    class DuckDB::ScalarFunctionSet
   </h1>
 
   <section class="description">
     
-<p>The <a href="InstanceCache.html"><code>DuckDB::InstanceCache</code></a> is necessary if a client/program (re)opens multiple databases to the same file within the same statement.</p>
+<p><a href="ScalarFunctionSet.html"><code>DuckDB::ScalarFunctionSet</code></a> encapsulates DuckDB’s scalar function set, which allows registering multiple overloads of a scalar function under one name.</p>
 
-<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;duckdb&#39;</span>
-<span class="ruby-identifier">cache</span> = <span class="ruby-constant">DuckDB</span><span class="ruby-operator">::</span><span class="ruby-constant">InstanceCache</span>.<span class="ruby-identifier">new</span>
-<span class="ruby-identifier">db1</span> = <span class="ruby-identifier">cache</span>.<span class="ruby-identifier">get</span>(<span class="ruby-value">path:</span> <span class="ruby-string">&#39;db.duckdb&#39;</span>)
-<span class="ruby-identifier">db2</span> = <span class="ruby-identifier">cache</span>.<span class="ruby-identifier">get</span>(<span class="ruby-value">path:</span> <span class="ruby-string">&#39;db.duckdb&#39;</span>)
-</pre>
+<p>@note <a href="ScalarFunctionSet.html"><code>DuckDB::ScalarFunctionSet</code></a> is experimental.</p>
 
   </section>
 
@@ -588,7 +582,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">()</span>
+                <span class="method-args">(name)</span>
               </a>
             </div>
 
@@ -601,18 +595,13 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="c" data-language="c">static VALUE instance_cache_initialize(VALUE self) {
-    rubyDuckDBInstanceCache *ctx;
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/duckdb/scalar_function_set.rb, line 11</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">name</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>, <span class="ruby-node">&quot;#{name.class} is not a String or Symbol&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">String</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Symbol</span>)
 
-    TypedData_Get_Struct(self, rubyDuckDBInstanceCache, &amp;instance_cache_data_type, ctx);
-
-    ctx-&gt;instance_cache = duckdb_create_instance_cache();
-    if (ctx-&gt;instance_cache == NULL) {
-        rb_raise(eDuckDBError, &quot;Failed to create instance cache&quot;);
-    }
-
-    return self;
-}</pre>
+  <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-identifier">_initialize</span>(<span class="ruby-ivar">@name</span>)
+<span class="ruby-keyword">end</span></pre>
           </div>
 
 
@@ -620,7 +609,7 @@
         <div class="method-description">
 
 
-          
+          <p>@param name [String, Symbol] the function set name shared by all overloads @raise [TypeError] if name is not a String or Symbol</p>
 
 
         </div>
@@ -646,13 +635,13 @@
        </header>
 
 
-      <div id="method-i-destroy" class="method-detail anchor-link ">
+      <div id="method-i-add" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-destroy" title="Link to this method">
-                <span class="method-name">destroy</span>
-                <span class="method-args">()</span>
+              <a href="#method-i-add" title="Link to this method">
+                <span class="method-name">add</span>
+                <span class="method-args">(scalar_function)</span>
               </a>
             </div>
 
@@ -664,62 +653,15 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="destroy-source">
-            <pre class="c" data-language="c">static VALUE instance_cache_destroy(VALUE self) {
-    rubyDuckDBInstanceCache *ctx;
-    TypedData_Get_Struct(self, rubyDuckDBInstanceCache, &amp;instance_cache_data_type, ctx);
+          <div class="method-source-code" id="add-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/duckdb/scalar_function_set.rb, line 22</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add</span>(<span class="ruby-identifier">scalar_function</span>)
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">scalar_function</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">DuckDB</span><span class="ruby-operator">::</span><span class="ruby-constant">ScalarFunction</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>, <span class="ruby-node">&quot;#{scalar_function.class} is not a DuckDB::ScalarFunction&quot;</span>
+  <span class="ruby-keyword">end</span>
 
-    if (ctx-&gt;instance_cache) {
-        duckdb_destroy_instance_cache(&amp;(ctx-&gt;instance_cache));
-        ctx-&gt;instance_cache = NULL;
-    }
-
-    return Qnil;
-}</pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-get" class="method-detail anchor-link ">
-        <div class="method-header">
-
-
-              <div class="method-heading">
-                <a href="#method-i-get" title="Link to this method">
-                  <span class="method-callseq">
-                    get(path:, config:) &rarr; self
-                  </span>
-                </a>
-              </div>
-
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="get-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/duckdb/instance_cache.rb, line 18</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get</span>(<span class="ruby-value">path:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">config:</span> <span class="ruby-keyword">nil</span>)
-  <span class="ruby-identifier">get_or_create</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">config</span>)
+  <span class="ruby-identifier">scalar_function</span>.<span class="ruby-identifier">name</span> = <span class="ruby-ivar">@name</span>
+  <span class="ruby-identifier">_add</span>(<span class="ruby-identifier">scalar_function</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -728,11 +670,7 @@
         <div class="method-description">
 
 
-          <p>Returns a <a href="Database.html"><code>DuckDB::Database</code></a> object for the given path and config.</p>
-
-<pre class="ruby"><span class="ruby-identifier">db1</span> = <span class="ruby-identifier">cache</span>.<span class="ruby-identifier">get</span>(<span class="ruby-value">path:</span> <span class="ruby-string">&#39;db.duckdb&#39;</span>)
-<span class="ruby-identifier">db2</span> = <span class="ruby-identifier">cache</span>.<span class="ruby-identifier">get</span>(<span class="ruby-value">path:</span> <span class="ruby-string">&#39;db.duckdb&#39;</span>)
-</pre>
+          <p>@param <a href="../lib/duckdb/scalar_function_rb.html">scalar_function</a> [DuckDB::ScalarFunction] the overload to add @return [self] @raise [TypeError] if <a href="../lib/duckdb/scalar_function_rb.html">scalar_function</a> is not a <a href="ScalarFunction.html"><code>DuckDB::ScalarFunction</code></a> @raise [DuckDB::Error] if the overload already exists in the set</p>
 
 
         </div>
