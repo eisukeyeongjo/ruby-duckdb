@@ -5,17 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class DuckDB::ScalarFunctionSet - RDoc Documentation</title>
+<title>class DuckDB::AggregateFunctionSet - RDoc Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,DuckDB::ScalarFunctionSet"
+    content="ruby,class,DuckDB::AggregateFunctionSet"
   >
 
     <meta
       name="description"
-      content="class DuckDB::ScalarFunctionSet: ScalarFunctionSet encapsulates DuckDB&#39;s scalar function set, which allows registering multiple overloads of a scalar function under one name. ScalarFu"
+      content="class DuckDB::AggregateFunctionSet: AggregateFunctionSet encapsulates DuckDB&#39;s aggregate function set, which allows registering multiple overloads of an aggregate function under one name"
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class DuckDB::ScalarFunctionSet - RDoc Documentation">
+<meta property="og:title" content="class DuckDB::AggregateFunctionSet - RDoc Documentation">
 
 
 
-    <meta property="og:description" content="ScalarFunctionSet encapsulates DuckDB&#39;s scalar function set, which allows registering multiple overloads of a scalar function under one name. ScalarFu">
+    <meta property="og:description" content="AggregateFunctionSet encapsulates DuckDB&#39;s aggregate function set, which allows registering multiple overloads of an aggregate function under one name">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class DuckDB::ScalarFunctionSet - RDoc Documentation">
+<meta name="twitter:title" content="class DuckDB::AggregateFunctionSet - RDoc Documentation">
 
 
 
-    <meta name="twitter:description" content="ScalarFunctionSet encapsulates DuckDB&#39;s scalar function set, which allows registering multiple overloads of a scalar function under one name. ScalarFu">
+    <meta name="twitter:description" content="AggregateFunctionSet encapsulates DuckDB&#39;s aggregate function set, which allows registering multiple overloads of an aggregate function under one name">
 
 
 
@@ -533,7 +533,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-DuckDB::ScalarFunctionSet">
+<main role="main" aria-labelledby="class-DuckDB::AggregateFunctionSet">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -546,22 +546,22 @@
       
       <li>
         
-        <span>ScalarFunctionSet</span>
+        <span>AggregateFunctionSet</span>
         
       </li>
       
     </ol>
   
 
-  <h1 id="class-DuckDB::ScalarFunctionSet" class="anchor-link class">
-    class DuckDB::ScalarFunctionSet
+  <h1 id="class-DuckDB::AggregateFunctionSet" class="anchor-link class">
+    class DuckDB::AggregateFunctionSet
   </h1>
 
   <section class="description">
     
-<p><a href="ScalarFunctionSet.html"><code>DuckDB::ScalarFunctionSet</code></a> encapsulates DuckDB’s scalar function set, which allows registering multiple overloads of a scalar function under one name.</p>
+<p><a href="AggregateFunctionSet.html"><code>DuckDB::AggregateFunctionSet</code></a> encapsulates DuckDB’s aggregate function set, which allows registering multiple overloads of an aggregate function under one name.</p>
 
-<p>@note <a href="ScalarFunctionSet.html"><code>DuckDB::ScalarFunctionSet</code></a> is experimental.</p>
+<p>@note <a href="AggregateFunctionSet.html"><code>DuckDB::AggregateFunctionSet</code></a> is experimental.</p>
 
   </section>
 
@@ -604,12 +604,11 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/duckdb/scalar_function_set.rb, line 11</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/duckdb/aggregate_function_set.rb, line 11</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">name</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>, <span class="ruby-node">&quot;#{name.class} is not a String or Symbol&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">String</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Symbol</span>)
 
-  <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>
-  <span class="ruby-identifier">_initialize</span>(<span class="ruby-ivar">@name</span>)
+  <span class="ruby-identifier">_initialize</span>(<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -650,7 +649,7 @@
             <div class="method-heading">
               <a href="#method-i-add" title="Link to this method">
                 <span class="method-name">add</span>
-                <span class="method-args">(scalar_function)</span>
+                <span class="method-args">(aggregate_function)</span>
               </a>
             </div>
 
@@ -663,13 +662,13 @@
             </details>
           </div>
           <div class="method-source-code" id="add-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/duckdb/scalar_function_set.rb, line 22</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add</span>(<span class="ruby-identifier">scalar_function</span>)
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">scalar_function</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">DuckDB</span><span class="ruby-operator">::</span><span class="ruby-constant">ScalarFunction</span>)
-    <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>, <span class="ruby-node">&quot;#{scalar_function.class} is not a DuckDB::ScalarFunction&quot;</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/duckdb/aggregate_function_set.rb, line 21</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add</span>(<span class="ruby-identifier">aggregate_function</span>)
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">aggregate_function</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">DuckDB</span><span class="ruby-operator">::</span><span class="ruby-constant">AggregateFunction</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>, <span class="ruby-node">&quot;#{aggregate_function.class} is not a DuckDB::AggregateFunction&quot;</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-identifier">_add</span>(<span class="ruby-identifier">scalar_function</span>)
+  <span class="ruby-identifier">_add</span>(<span class="ruby-identifier">aggregate_function</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -678,7 +677,7 @@
         <div class="method-description">
 
 
-          <p>@param <a href="../lib/duckdb/scalar_function_rb.html">scalar_function</a> [DuckDB::ScalarFunction] the overload to add @return [self] @raise [TypeError] if <a href="../lib/duckdb/scalar_function_rb.html">scalar_function</a> is not a <a href="ScalarFunction.html"><code>DuckDB::ScalarFunction</code></a> @raise [DuckDB::Error] if the overload already exists in the set</p>
+          <p>@param <a href="../lib/duckdb/aggregate_function_rb.html">aggregate_function</a> [DuckDB::AggregateFunction] the overload to add @return [self] @raise [TypeError] if <a href="../lib/duckdb/aggregate_function_rb.html">aggregate_function</a> is not a <a href="AggregateFunction.html"><code>DuckDB::AggregateFunction</code></a> @raise [DuckDB::Error] if the overload already exists in the set</p>
 
 
         </div>
